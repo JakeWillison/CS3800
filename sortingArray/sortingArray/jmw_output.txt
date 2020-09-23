@@ -1,0 +1,6 @@
+The number 0 was NOT found. It took 21 comparisons.
+The number 200000 was NOT found. It took 16 comparisons.
+The number 7544 was found with 21 comparisons.
+The number 30883 was found with 20 comparisons.
+The number 80473 was found with 15 comparisons.
+The number 98593 was found with 18 comparisons.
