@@ -16,9 +16,8 @@ void sortArray(int numbers[], int numOfElem);
 ofstream outputFile;
 
 int main() {
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));                    //sets up random seed
 
- //   clock_t start, end;
     int numbers[numOfElem];
 
     outputFile.open("jmw_select_out.txt" , ios::app);
@@ -26,18 +25,17 @@ int main() {
 
     //Fill array
 
-    for (int i = 0; i < numOfElem; i++) {
-        int rando = rand() % 1001;
-        numbers[i] = rando;
+    for (int i = 0; i < numOfElem; i++) {               //fills the array
+        numbers[i] = rand() % 1001;
     }
 
-    auto start = chrono::high_resolution_clock::now();
-//    start = clock();
-    sortArray(numbers, numOfElem);
-//    end = clock();
-    auto end = chrono::high_resolution_clock::now();
-    double exTime = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-    exTime *= 1e-9;
+    auto start = chrono::high_resolution_clock::now();  //finds the time just before the sort begins
+
+    sortArray(numbers, numOfElem);                      //runs function
+
+    auto end = chrono::high_resolution_clock::now();    //finds the time just after the sort ends
+    double exTime = chrono::duration_cast<chrono::nanoseconds>(end - start).count();    //this finds the execution time
+    exTime *= 1e-9; //converts to seconds
 
     outputFile << "The largest number is " << numbers[0] << ": This took " << fixed << exTime << setprecision(9) << " seconds" << endl;
  
