@@ -121,7 +121,8 @@ public:
         root = NULL;
     }
 
-    void  leftRotation(node* N) {
+    void  rightRotation(node* N) {
+
         int temp;
         temp = N->data;
         N->right = new node;        //makes empty slot a new node equal to N
@@ -131,10 +132,11 @@ public:
 
         N->data = N->left->data;    //moves the rest of the data up
         N->left->data = N->left->left->data;
-        free(N->left->left);        //frees the last node.
-    }
+        N->left->left->data = NULL;  
+        N->left->left = NULL;        //frees the last node.
+        }
 
-    void  rightRotation(node* N) {
+    void  leftRotation(node* N) {
         int temp;
         temp = N->data;
         N->left = new node;     //makes empty slot a new node equal to N
@@ -144,7 +146,8 @@ public:
  
         N->data = N->right->data;   //moves the rest of the data up
         N->right->data = N->right->right->data;
-        free(N->right->right);      //frees the last node
+        N->right->right->data = NULL;
+        N->right->right = NULL;      //frees the last node
     }
 
 
@@ -213,17 +216,35 @@ public:
 
 int main() {
 
-    const int arrLeng = 10;
-    int arr[arrLeng];
+    const int arrLeng = 3;
+ /*   int arr[arrLeng];
     cout << "Array Entered: ";
     for (int i = 0; i < arrLeng; i++) {
         arr[i] = rand() % 100;
         cout << arr[i] << " , ";
     }
     cout << endl;
+*/
 
+    int arr[arrLeng];
+    arr[2] = 61;
+    arr[1] = 57;
+    arr[0] = 12;
     binarySearchTree bsTree = binarySearchTree(arr, arrLeng);
-    cout << "preorder traversal" << endl;
+    cout << "preorder before rotation" << endl;
+    bsTree.preorderTraversal();
+    bsTree.leftRotation(bsTree.root);
+    cout << "search: " << bsTree.search(61, bsTree.root) << endl;
+    cout << "search: " << bsTree.search(57, bsTree.root) << endl;
+    cout << "search: " << bsTree.search(12, bsTree.root) << endl;
+
+    cout << "preorder post rotation" << endl;
+    bsTree.preorderTraversal();
+
+
+    bsTree.destroyTree(bsTree.root);
+    
+    /*   cout << "preorder traversal" << endl;
     bsTree.preorderTraversal();
     cout << "inorder traversal" << endl;
     bsTree.inorderTraversal();
@@ -244,6 +265,6 @@ int main() {
     cout << "delete function" << endl;
     bsTree.destroyTree(bsTree.root);
     cout << "see if empty results: " << bsTree.isEmpty() << endl;
-
+*/
     return 0;
 }
