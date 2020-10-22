@@ -5,6 +5,7 @@ using namespace std;
 
 struct node {                   //builds the sturcture for a node
     int data;
+    int height;
     node* left;
     node* right;
 };
@@ -69,9 +70,12 @@ public:
             return 0;
         int leftHeight = treeHeight(N->left);       
         int rightHeight = treeHeight(N->right);
-        if (leftHeight > rightHeight)               //picks the longer route of the two.
-            return (1 + leftHeight);
+        if (leftHeight > rightHeight) {               //picks the longer route of the two.
+            N->height = 1 + leftHeight;
+            return (N->height);
+        }
         else {
+            N->height = 1 + rightHeight;
             return (1 + rightHeight);
         }
     }
@@ -89,9 +93,23 @@ public:
             return 0;
         else if (N->left == NULL && N->right == NULL)
             return 1;
-        else {
+        else { 
             return (treeLeavesCount(N->left) + treeLeavesCount(N->right));
         }
+    }
+
+    int balFac(node* N) {                           //finds the balance factor
+        if (N->left != NULL && N->right != NULL) {      //If balFac > 0: left scew. If balFac < 0: right scew. If balFac == 0, balanced. 
+            return N->left->height - N->right->height;
+        }
+        else if (N->left && N->right == NULL) {         //Positive balance factor for left
+            return N->left->height;
+        }
+        else if (N->left == NULL && N->right) {         //Negative balance factor for right
+            return -N->right->height;
+        }
+        else if (N->left == NULL && N->right == NULL)   //if leaf balFac is 0.
+            return 0;
     }
 
     void destroyTree(node* N) {      //deletes tree
@@ -102,6 +120,33 @@ public:
         free(N);
         root = NULL;
     }
+
+    void  leftRotation(node* N) {
+        int temp;
+        temp = N->data;
+        N->right = new node;        //makes empty slot a new node equal to N
+        N->right->data = temp;
+        N->right->left = NULL;
+        N->right->right = NULL;
+
+        N->data = N->left->data;    //moves the rest of the data up
+        N->left->data = N->left->left->data;
+        free(N->left->left);        //frees the last node.
+    }
+
+    void  rightRotation(node* N) {
+        int temp;
+        temp = N->data;
+        N->left = new node;     //makes empty slot a new node equal to N
+        N->left->data = temp;
+        N->left->left = NULL;
+        N->left->right = NULL;
+ 
+        N->data = N->right->data;   //moves the rest of the data up
+        N->right->data = N->right->right->data;
+        free(N->right->right);      //frees the last node
+    }
+
 
     bool search(int num, node* N) {  //returns true if the value exists in the tree and false if it does not
         bool found = false;
