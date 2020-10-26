@@ -121,35 +121,37 @@ public:
         root = NULL;
     }
 
-    void  rightRotation(node* N) {
+    void rightRotation(node*& N) {
+        struct node* temp;
+        struct node* temp2;
+        temp = N;
+        temp2 = N->left->right;
 
-        int temp;
-        temp = N->data;
-        N->right = new node;        //makes empty slot a new node equal to N
-        N->right->data = temp;
-        N->right->left = NULL;
-        N->right->right = NULL;
-
-        N->data = N->left->data;    //moves the rest of the data up
-        N->left->data = N->left->left->data;
-        N->left->left->data = NULL;  
-        N->left->left = NULL;        //frees the last node.
-        }
-
-    void  leftRotation(node* N) {
-        int temp;
-        temp = N->data;
-        N->left = new node;     //makes empty slot a new node equal to N
-        N->left->data = temp;
-        N->left->left = NULL;
-        N->left->right = NULL;
- 
-        N->data = N->right->data;   //moves the rest of the data up
-        N->right->data = N->right->right->data;
-        N->right->right->data = NULL;
-        N->right->right = NULL;      //frees the last node
+        N = N->left;
+        N->right = temp;
+        N->right->left = temp2;
     }
 
+    void  leftRotation(node*& N) {
+        struct node* temp;
+        struct node* temp2;
+        temp = N;
+        temp2 = N->right->left;
+
+        N = N->right;
+        N->left = temp;
+        N->left->right = temp2;
+    }
+
+    void leftRightRotation(node*& N) {
+        leftRotation(N->left);
+        rightRotation(N);
+    }
+
+    void rightLeftRotation(node*& N) {
+        rightRotation(N->right);
+        leftRotation(N);
+    }
 
     bool search(int num, node* N) {  //returns true if the value exists in the tree and false if it does not
         bool found = false;
@@ -174,6 +176,7 @@ public:
         }
 
         if (num < N->data) {              //if less goes left
+
             if (N->left != NULL) {
                 insert(num, N->left);
             }
@@ -184,6 +187,7 @@ public:
                 N->left->right = NULL;
                 N = root;
             }
+            
         }
         else if (num > N->data) {         //if greater goes right
             if (N->right != NULL) {
@@ -196,6 +200,20 @@ public:
                 N->right->right = NULL;
                 N = root;
             }
+        }
+        
+  
+        if (balFac(N) == 2 && balFac(N->left) == 1){
+            rightRotation(N);
+                }
+        else if (balFac(N) == 2 && balFac(N->left) == -1) {
+            leftRightRotation(N);
+        }
+        else if (balFac(N) == -2 && balFac(N->right) == -1) {
+            leftRotation(N);
+        }
+        else if (balFac(N) == -2 && balFac(N->right) == 1) {
+            rightLeftRotation(N);
         }
     }
 
@@ -231,16 +249,13 @@ int main() {
     arr[1] = 57;
     arr[0] = 12;
     binarySearchTree bsTree = binarySearchTree(arr, arrLeng);
-    cout << "preorder before rotation" << endl;
+    cout << "Pre rotation traversal" << endl;
     bsTree.preorderTraversal();
+    
     bsTree.leftRotation(bsTree.root);
-    cout << "search: " << bsTree.search(61, bsTree.root) << endl;
-    cout << "search: " << bsTree.search(57, bsTree.root) << endl;
-    cout << "search: " << bsTree.search(12, bsTree.root) << endl;
-
-    cout << "preorder post rotation" << endl;
+    
+    cout << "Post rotation traversal " << endl;
     bsTree.preorderTraversal();
-
 
     bsTree.destroyTree(bsTree.root);
     
