@@ -102,14 +102,40 @@ public:
         if (N->left != NULL && N->right != NULL) {      //If balFac > 0: left scew. If balFac < 0: right scew. If balFac == 0, balanced. 
             return N->left->height - N->right->height;
         }
-        else if (N->left && N->right == NULL) {         //Positive balance factor for left
+        else if (N->left != NULL && N->right == NULL) {         //Positive balance factor for left
             return N->left->height;
         }
-        else if (N->left == NULL && N->right) {         //Negative balance factor for right
+        else if (N->left == NULL && N->right != NULL) {         //Negative balance factor for right
             return -N->right->height;
         }
         else if (N->left == NULL && N->right == NULL)   //if leaf balFac is 0.
             return 0;
+    }
+
+    void balanceTree(node*& N) {
+        if (balFac(N) == 2) {
+            if (balFac(N->left) == 1) {
+                rightRotation(N);
+            }
+            else if (balFac(N->left) == -1) {
+                leftRightRotation(N);
+            }
+            else {
+                balanceTree(N->left);
+            }
+        }
+        else if (balFac(N) == -2) {
+            if (balFac(N->right) == -1) {
+                leftRotation(N);
+            }
+            else if (balFac(N->right) == 1) {
+                rightLeftRotation(N);
+            }
+            else {
+                balanceTree(N->right);
+            }
+        }
+        treeHeight(root);
     }
 
     void destroyTree(node* N) {      //deletes tree
@@ -201,9 +227,12 @@ public:
                 N = root;
             }
         }
-        
   
-        if (balFac(N) == 2 && balFac(N->left) == 1){
+        treeHeight(root);
+
+        balanceTree(root);
+
+  /*      if (balFac(N) == 2 && balFac(N->left) == 1){
             rightRotation(N);
                 }
         else if (balFac(N) == 2 && balFac(N->left) == -1) {
@@ -214,7 +243,7 @@ public:
         }
         else if (balFac(N) == -2 && balFac(N->right) == 1) {
             rightLeftRotation(N);
-        }
+        }*/
     }
 
     binarySearchTree(int arr[], int arrLeng) {       //constructor
@@ -234,7 +263,7 @@ public:
 
 int main() {
 
-    const int arrLeng = 3;
+    const int arrLeng = 6;
  /*   int arr[arrLeng];
     cout << "Array Entered: ";
     for (int i = 0; i < arrLeng; i++) {
@@ -245,16 +274,15 @@ int main() {
 */
 
     int arr[arrLeng];
-    arr[2] = 61;
-    arr[1] = 57;
-    arr[0] = 12;
+    arr[0] = 50;
+    arr[1] = 25;
+    arr[2] = 15;
+    arr[3] = 70;
+    arr[4] = 65;
+    arr[5] = 10;
+
     binarySearchTree bsTree = binarySearchTree(arr, arrLeng);
-    cout << "Pre rotation traversal" << endl;
-    bsTree.preorderTraversal();
-    
-    bsTree.leftRotation(bsTree.root);
-    
-    cout << "Post rotation traversal " << endl;
+
     bsTree.preorderTraversal();
 
     bsTree.destroyTree(bsTree.root);
