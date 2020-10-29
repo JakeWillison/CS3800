@@ -1,7 +1,11 @@
 #include <iostream>
 #include <cstdlib>
+#include <fstream>
 
 using namespace std;
+
+ifstream inFile;
+ofstream outFile;
 
 struct node {                   //builds the sturcture for a node
     int data;
@@ -10,10 +14,11 @@ struct node {                   //builds the sturcture for a node
     node* right;
 };
 
-
 class binarySearchTree {
 public:
     node* root;
+    int numOfRightRotations = 0;
+    int numOfLeftRotations = 0;
 
     bool isEmpty() {                 //checks to see if the tree is empty by checking if there is a root
         if (root == NULL)
@@ -112,30 +117,29 @@ public:
             return 0;
     }
 
-    void balanceTree(node*& N) {
-        if (balFac(N) == 2) {
-            if (balFac(N->left) == 1) {
-                rightRotation(N);
+    void balanceTree(node*& N) {                    //function balances the tree by checking the balance factor of each node in the tree
+        if (N != NULL) {
+            if (balFac(N) == 2) {                   //If the tree is leaning left
+                if (balFac(N->left) == 1) {
+                    rightRotation(N);
+                }
+                else if (balFac(N->left) == -1) {
+                    leftRightRotation(N);
+                }
             }
-            else if (balFac(N->left) == -1) {
-                leftRightRotation(N);
+            else if (balFac(N) == -2) {             //if the tree is leaning right
+                if (balFac(N->right) == -1) {
+                    leftRotation(N);
+                }
+                else if (balFac(N->right) == 1) {
+                    rightLeftRotation(N);
+                }
             }
-            else {
-                balanceTree(N->left);
-            }
+            
+            treeHeight(root);                       //Reset the heightos nodes after a potential switch
+            balanceTree(N->left);                   //Check the left nodes
+            balanceTree(N->right);                  //check the right nodes
         }
-        else if (balFac(N) == -2) {
-            if (balFac(N->right) == -1) {
-                leftRotation(N);
-            }
-            else if (balFac(N->right) == 1) {
-                rightLeftRotation(N);
-            }
-            else {
-                balanceTree(N->right);
-            }
-        }
-        treeHeight(root);
     }
 
     void destroyTree(node* N) {      //deletes tree
@@ -150,31 +154,35 @@ public:
     void rightRotation(node*& N) {
         struct node* temp;
         struct node* temp2;
-        temp = N;
+        temp = N;                       //Sets up temp variables to store data for rotation
         temp2 = N->left->right;
 
-        N = N->left;
-        N->right = temp;
+        N = N->left;                    //resets N as the node to the left, N->right becomes N
+        N->right = temp;                //lastly the data that was stored in temp2 gets placed in right->left.
         N->right->left = temp2;
+
+        numOfRightRotations++;
     }
 
     void  leftRotation(node*& N) {
-        struct node* temp;
+        struct node* temp;              //Sets up temp variables to store data for rotation
         struct node* temp2;
         temp = N;
         temp2 = N->right->left;
 
-        N = N->right;
-        N->left = temp;
+        N = N->right;                   //resets N as the node to the right, N->left becomes N
+        N->left = temp;                 //lastly temp2 gets stored in N->left->right
         N->left->right = temp2;
+
+        numOfLeftRotations++;
     }
 
-    void leftRightRotation(node*& N) {
+    void leftRightRotation(node*& N) {     //Calls a left rotation then a right rotation
         leftRotation(N->left);
         rightRotation(N);
     }
 
-    void rightLeftRotation(node*& N) {
+    void rightLeftRotation(node*& N) {      //calls a right rotation then a left rotation.
         rightRotation(N->right);
         leftRotation(N);
     }
@@ -231,19 +239,6 @@ public:
         treeHeight(root);
 
         balanceTree(root);
-
-  /*      if (balFac(N) == 2 && balFac(N->left) == 1){
-            rightRotation(N);
-                }
-        else if (balFac(N) == 2 && balFac(N->left) == -1) {
-            leftRightRotation(N);
-        }
-        else if (balFac(N) == -2 && balFac(N->right) == -1) {
-            leftRotation(N);
-        }
-        else if (balFac(N) == -2 && balFac(N->right) == 1) {
-            rightLeftRotation(N);
-        }*/
     }
 
     binarySearchTree(int arr[], int arrLeng) {       //constructor
@@ -260,54 +255,29 @@ public:
     }
 };
 
-
 int main() {
 
-    const int arrLeng = 6;
- /*   int arr[arrLeng];
-    cout << "Array Entered: ";
-    for (int i = 0; i < arrLeng; i++) {
-        arr[i] = rand() % 100;
-        cout << arr[i] << " , ";
+    inFile.open("ints.txt");
+    outFile.open("rotationsDataOut.txt" , fstream::app);
+
+    int currNum;
+    int num;
+    int numOfN = 0;
+
+    binarySearchTree bsTree = binarySearchTree();
+
+    while (inFile >> currNum) {
+        bsTree.insert(currNum, bsTree.root);
+        numOfN++;
     }
-    cout << endl;
-*/
-
-    int arr[arrLeng];
-    arr[0] = 50;
-    arr[1] = 25;
-    arr[2] = 15;
-    arr[3] = 70;
-    arr[4] = 65;
-    arr[5] = 10;
-
-    binarySearchTree bsTree = binarySearchTree(arr, arrLeng);
 
     bsTree.preorderTraversal();
 
+    outFile << "N = " << numOfN << ". Right Rotations = " << bsTree.numOfRightRotations << ". Left Rotations = " << bsTree.numOfLeftRotations << "." << endl;
+
+    inFile.close();
+    outFile.close();
     bsTree.destroyTree(bsTree.root);
     
-    /*   cout << "preorder traversal" << endl;
-    bsTree.preorderTraversal();
-    cout << "inorder traversal" << endl;
-    bsTree.inorderTraversal();
-    cout << "postorderTraversal" << endl;
-    bsTree.postorderTraversal();
-    cout << "insert 41 then inorder traversal" << endl;
-    bsTree.insert(41, bsTree.root);
-    bsTree.inorderTraversal();
-    cout << "Search Function for 65" << endl;
-    cout << "results: " << bsTree.search(65, bsTree.root) << endl;
-    cout << "Search Function for 93" << endl;
-    cout << "results: " << bsTree.search(93, bsTree.root) << endl;
-    cout << "Tree height = " << bsTree.treeHeight(bsTree.root) << endl;
-    cout << "Number of tree leaves = " << bsTree.treeLeavesCount(bsTree.root) << endl;
-    cout << "Number of nodes = " << bsTree.treeNodeCount(bsTree.root) << endl;
-    cout << "is empty test " << endl;
-    cout << "results: " << bsTree.isEmpty() << endl;
-    cout << "delete function" << endl;
-    bsTree.destroyTree(bsTree.root);
-    cout << "see if empty results: " << bsTree.isEmpty() << endl;
-*/
     return 0;
 }

@@ -1,0 +1,10 @@
+N = 15. Right Rotations = 5. Left Rotations = 3.
+N = 44. Right Rotations = 7. Left Rotations = 8.
+N = 32. Right Rotations = 8. Left Rotations = 12.
+N = 23. Right Rotations = 6. Left Rotations = 7.
+N = 37. Right Rotations = 6. Left Rotations = 9.
+N = 18. Right Rotations = 3. Left Rotations = 2.
+N = 18. Right Rotations = 8. Left Rotations = 7.
+N = 20. Right Rotations = 2. Left Rotations = 6.
+N = 17. Right Rotations = 4. Left Rotations = 4.
+N = 17. Right Rotations = 4. Left Rotations = 5.
