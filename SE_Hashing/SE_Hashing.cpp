@@ -18,12 +18,23 @@ int main()
         hashTable[i] = "STOP";
     }
 
-    while (inFile >> currWord) {
-        //convert to ascii
-        //index = ascii % 5
-        //if hasTable[index] == STOP
-        // hashTable[index] = currWord;
+    int collisionCount = 0;
 
+    while (inFile >> currWord) {
+        bool placed = false;
+        
+        //x = convert to ascii
+        int i = 0; //this will be = x%5
+
+        while (!placed) {
+            if (hashTable[i] == "STOP") {
+                hashTable[i] = currWord;
+            }
+            else {
+                i++;
+                collisionCount++;
+            }
+        }
     }
 
     inFile.close();
